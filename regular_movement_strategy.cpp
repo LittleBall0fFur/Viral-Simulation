@@ -1,13 +1,13 @@
-include "regular_movement_strategy.h"
+#include "regular_movement_strategy.h"
 
 namespace corsim
 {
-  RegularMovementStrategy::Movement() : Vector2 {
-    //To-Do Implement regular movement algorithm
-
+  MovementStrategy& RegularMovementStrategy::get_instance(){
+    static RegularMovementStrategy instance{};
+    return instance;
   }
 
-  RegularMovementStrategy::~RegularMovementStrategy(){
-    //Destroy all objects
+  void RegularMovementStrategy::move_subject(Subject& s, const double delta_time) {
+      s.position += s.velocity * delta_time;
   }
 };

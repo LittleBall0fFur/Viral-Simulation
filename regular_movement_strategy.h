@@ -1,14 +1,15 @@
-#include "vector2.h"
+#pragma once
+
+#include "movement_strategy.h"
 
 namespace corsim
 {
   class RegularMovementStrategy: public MovementStrategy {
     public:
-        Movement();
+      void move_subject(Subject& s, const double delta_time) override;
+      static MovementStrategy& get_instance();
 
-        ~RegularMovementStrategy();
     private:
-
-
+      RegularMovementStrategy() = default;
   };
 };

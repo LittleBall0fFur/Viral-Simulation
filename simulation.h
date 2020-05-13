@@ -49,6 +49,7 @@ class Simulation
         bool running = false;
         int tick_speed = 1000/30;
         int _sim_width = 800, _sim_height = 500;
+
 };
 
 }

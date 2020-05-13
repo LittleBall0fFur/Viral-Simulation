@@ -23,7 +23,9 @@ namespace corsim
 {
 
 Simulation::Simulation(int width, int height, std::unique_ptr<Canvas> canvas, std::unique_ptr<StatisticsHandler> sh) :
-    _sim_width{width}, _sim_height{height}, _canvas{std::move(canvas)}, _sh{std::move(sh)} {}
+    _sim_width{width}, _sim_height{height}, _canvas{std::move(canvas)}, _sh{std::move(sh)} {
+
+    }
 
 void Simulation::add_subject(Subject&& s)
 {
@@ -78,10 +80,7 @@ void Simulation::tick()
 
     for(Subject& s : _subjects)
     {
-      //Movement
-      //To-Do implement movement strategies
-        s.position.x = s.position.x + s.velocity.x * dt;
-        s.position.y = s.position.y + s.velocity.y * dt;
+        s.move(dt);
 
         if(s.infected())
         {

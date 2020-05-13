@@ -15,10 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "subject.h"
+#include "regular_movement_strategy.h"
 #include <math.h>
 
 namespace corsim
 {
+  MovementStrategy& Subject::_strategy = RegularMovementStrategy::get_instance();
 
 Subject::Subject(int x, int y, int radius, bool infected)
 {
@@ -29,24 +31,12 @@ Subject::Subject(int x, int y, int radius, bool infected)
     velocity = Vector2(0, 0);
 }
 
-double Subject::dx()
-{
-    return this->_dx;
+void Subject::set_strategy(MovementStrategy& strategy){
+  _strategy = strategy;
 }
 
-double Subject::dy()
-{
-    return this->_dy;
-}
-
-void Subject::set_dx(double dx)
-{
-    this->_dx = dx;
-}
-
-void Subject::set_dy(double dy)
-{
-    this->_dy = dy;
+void Subject::move(double dt){
+  _strategy.move_subject(*this, dt);
 }
 
 int Subject::radius()

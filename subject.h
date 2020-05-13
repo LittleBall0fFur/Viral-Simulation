@@ -17,10 +17,11 @@
 #pragma once
 
 #include "vector2.h"
+#include "movement_strategy.h"
 
 namespace corsim
 {
-
+class MovementStrategy;
 /**
  * A subject is an entity within the simulation. It is modeled as a
  * circle in 2D and can be infected.
@@ -34,12 +35,15 @@ class Subject
         void infect();
         double angle();
         double speed();
+        static void set_strategy(MovementStrategy& strategy);
+        void move(double dt);
 
         Vector2 position;
         Vector2 velocity;
     private:
         bool _infected = false;
         int _radius = 0;
+        static MovementStrategy& _strategy;
 };
 
 };
