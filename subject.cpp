@@ -20,7 +20,6 @@
 
 namespace corsim
 {
-//  MovementStrategy Subject::_strategy = LockdownMovementStrategy::get_instance();
 
 Subject::Subject(int x, int y, int radius, bool infected)
 {
