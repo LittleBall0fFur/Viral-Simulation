@@ -30,12 +30,13 @@ class Subject
 {
     public:
         Subject(int x, int y, int radius, bool infected);
+
         int radius(); //Radius needed for collisions
         bool infected();
         void infect();
         double angle();
         double speed();
-        static void set_strategy(MovementStrategy& strategy);
+        void set_strategy(MovementStrategy& strategy);
         void move(double dt);
 
         Vector2 position;
@@ -43,7 +44,8 @@ class Subject
     private:
         bool _infected = false;
         int _radius = 0;
-        static MovementStrategy& _strategy;
+        MovementStrategy* _strategy;
+
 };
 
 };

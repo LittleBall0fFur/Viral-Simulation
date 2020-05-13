@@ -20,7 +20,7 @@
 
 namespace corsim
 {
-  MovementStrategy& Subject::_strategy = RegularMovementStrategy::get_instance();
+//  MovementStrategy Subject::_strategy = LockdownMovementStrategy::get_instance();
 
 Subject::Subject(int x, int y, int radius, bool infected)
 {
@@ -29,14 +29,16 @@ Subject::Subject(int x, int y, int radius, bool infected)
 
     position = Vector2(x, y);
     velocity = Vector2(0, 0);
+
+    _strategy = &RegularMovementStrategy::get_instance();
 }
 
 void Subject::set_strategy(MovementStrategy& strategy){
-  _strategy = strategy;
+  _strategy = &strategy;
 }
 
 void Subject::move(double dt){
-  _strategy.move_subject(*this, dt);
+  _strategy->move_subject(*this, dt);
 }
 
 int Subject::radius()

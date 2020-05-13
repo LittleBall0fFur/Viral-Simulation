@@ -18,9 +18,12 @@
 
 #include <vector>
 #include <memory>
+#include <iostream>
+#include <random>
 #include "subject.h"
 #include "canvas.h"
 #include "statistics_handler.h"
+#include "lockdown_movement_strategy.h"
 
 namespace corsim
 {
@@ -50,6 +53,9 @@ class Simulation
         int tick_speed = 1000/30;
         int _sim_width = 800, _sim_height = 500;
 
+        constexpr static double movement_threshold = 0.75;
+        std::default_random_engine _generator{};
+        std::bernoulli_distribution _distribution{movement_threshold};
 };
 
 }
