@@ -43,11 +43,11 @@ int main() {
     {
         double x = dist_w(mt); //Randomly generate x position
         double y = dist_h(mt); //Randomly generate y position
-        
+
         corsim::Subject su(x,y,SUBJECT_RADIUS,false);
 
-        su.set_dx(dist_dx(mt));
-        su.set_dy(dist_dy(mt));
+        su.velocity.x = dist_dx(mt);
+        su.velocity.y = dist_dy(mt);
 
         if(i == SUBJECT_COUNT-1)
         {
@@ -55,7 +55,7 @@ int main() {
         }
 
         s.add_subject(std::move(su));
-    }  
+    }
 
     s.run();
 }

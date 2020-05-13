@@ -22,7 +22,7 @@
 namespace corsim
 {
 
-Simulation::Simulation(int width, int height, std::unique_ptr<Canvas> canvas, std::unique_ptr<StatisticsHandler> sh) : 
+Simulation::Simulation(int width, int height, std::unique_ptr<Canvas> canvas, std::unique_ptr<StatisticsHandler> sh) :
     _sim_width{width}, _sim_height{height}, _canvas{std::move(canvas)}, _sh{std::move(sh)} {}
 
 void Simulation::add_subject(Subject&& s)
@@ -78,8 +78,10 @@ void Simulation::tick()
 
     for(Subject& s : _subjects)
     {
-        s.set_x(s.x() + s.dx() * dt);
-        s.set_y(s.y() + s.dy() * dt);
+      //Movement
+      //To-Do implement movement strategies
+        s.position.x = s.position.x + s.velocity.x * dt;
+        s.position.y = s.position.y + s.velocity.y * dt;
 
         if(s.infected())
         {
@@ -91,7 +93,7 @@ void Simulation::tick()
     {
         _sh.get()->communicate_number_infected(counter/30,numberInfected);
     }
-    
+
 
     draw_to_canvas();
 }
@@ -113,37 +115,37 @@ void Simulation::draw_to_canvas()
             c = RED;
         }
 
-        _canvas.get()->draw_ellipse(s.x(), s.y(), s.radius(), c);
+        _canvas.get()->draw_ellipse(s.position.x, s.position.y, s.radius(), c);
     }
 }
 
 void Simulation::wall_collision(Subject& s)
 {
-    if (s.x() - s.radius() + s.dx() < 0 ||
-        s.x() + s.radius() + s.dx() > _sim_width) {
-        s.set_dx(s.dx() * -1);
+    if (s.position.x - s.radius() + s.velocity.x < 0 ||
+        s.position.x + s.radius() + s.velocity.x > _sim_width) {
+        s.velocity.x = s.velocity.x * -1;
     }
-    if (s.y() - s.radius() + s.dy() < 0 ||
-        s.y() + s.radius() + s.dy() > _sim_height) {
-        s.set_dy(s.dy() * -1);
+    if (s.position.y - s.radius() + s.velocity.y < 0 ||
+        s.position.y + s.radius() + s.velocity.y > _sim_height) {
+        s.velocity.y = s.velocity.y * -1;
     }
-    if (s.y() + s.radius() > _sim_height) {
-        s.set_y(_sim_height - s.radius());
+    if (s.position.y + s.radius() > _sim_height) {
+        s.position.y = _sim_height - s.radius();
     }
-    if (s.y() - s.radius() < 0) {
-        s.set_y(s.radius());
+    if (s.position.y - s.radius() < 0) {
+        s.position.y = s.radius();
     }
-    if (s.x() + s.radius() > _sim_width) {
-        s.set_x(_sim_width - s.radius());
+    if (s.position.x + s.radius() > _sim_width) {
+        s.position.x = _sim_width - s.radius();
     }
-    if (s.x() - s.radius() < 0) {
-        s.set_x(s.radius());
+    if (s.position.x - s.radius() < 0) {
+        s.position.x = s.radius();
     }
 }
 
 double distance(Subject& s1, Subject& s2)
 {
-    return sqrt(pow(s1.x() - s2.x(),2) + pow(s1.y() - s2.y(),2));
+    return sqrt(pow(s1.position.x - s2.position.x,2) + pow(s1.position.y - s2.position.y,2));
 }
 
 void Simulation::subject_collision(Subject& s1, Subject& s2)
@@ -156,22 +158,22 @@ void Simulation::subject_collision(Subject& s1, Subject& s2)
         {
             s1.infect();
             s2.infect();
-        }        
+        }
 
         double theta1 = s1.angle();
         double theta2 = s2.angle();
-        double phi = atan2(s1.x() - s2.x(), s1.y() - s2.y());
+        double phi = atan2(s1.position.x - s2.position.x, s1.position.y - s2.position.y);
 
         double dx1F = ((2.0*cos(theta2 - phi)) / 2) * cos(phi) + sin(theta1-phi) * cos(phi+M_PI/2.0);
         double dy1F = ((2.0*cos(theta2 - phi)) / 2) * sin(phi) + sin(theta1-phi) * sin(phi+M_PI/2.0);
-        
+
         double dx2F = ((2.0*cos(theta1 - phi)) / 2) * cos(phi) + sin(theta2-phi) * cos(phi+M_PI/2.0);
         double dy2F = ((2.0*cos(theta1 - phi)) / 2) * sin(phi) + sin(theta2-phi) * sin(phi+M_PI/2.0);
 
-        s1.set_dx(dx1F);                
-        s1.set_dy(dy1F);                
-        s2.set_dx(dx2F);                
-        s2.set_dy(dy2F);
+        s1.velocity.x = dx1F;
+        s1.velocity.y = dy1F;
+        s2.velocity.x = dx2F;
+        s2.velocity.y = dy2F;
 
         static_collision(s1, s2, false);
     }
@@ -190,9 +192,9 @@ void Simulation::static_collision(Subject& s1, Subject& s2, bool emergency)
         biggerObject = temp;
     }
 
-    double theta = atan2((biggerObject.y() - smallerObject.y()), (biggerObject.x() - smallerObject.x()));
-    smallerObject.set_x(smallerObject.x() - overlap * cos(theta));
-    smallerObject.set_y(smallerObject.y() - overlap * sin(theta));
+    double theta = atan2((biggerObject.position.y - smallerObject.position.y), (biggerObject.position.x - smallerObject.position.x));
+    smallerObject.position.x = smallerObject.position.x - overlap * cos(theta);
+    smallerObject.position.y = smallerObject.position.y - overlap * sin(theta);
 
     if (distance(s1, s2) < s1.radius() + s2.radius()) {
         if (!emergency)

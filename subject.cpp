@@ -22,30 +22,11 @@ namespace corsim
 
 Subject::Subject(int x, int y, int radius, bool infected)
 {
-    this->_x = x;
-    this->_y = y;
     this->_radius = radius;
     this->_infected = infected;
-}
 
-double Subject::x()
-{
-    return this->_x;
-}
-
-double Subject::y()
-{
-    return this->_y;
-}
-
-void Subject::set_x(double x)
-{
-    this->_x = x;
-}
-
-void Subject::set_y(double y)
-{
-    this->_y = y;
+    position = Vector2(x, y);
+    velocity = Vector2(0, 0);
 }
 
 double Subject::dx()
@@ -85,12 +66,12 @@ void Subject::infect()
 
 double Subject::angle()
 {
-    return atan2(_dy,_dx);
+    return atan2(velocity.y, velocity.x);
 }
 
 double Subject::speed()
 {
-    return sqrt(_dx * _dx + _dy * _dy);
+    return sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
 }
 
 }
