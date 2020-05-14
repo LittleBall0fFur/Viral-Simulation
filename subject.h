@@ -16,6 +16,7 @@
 
 #pragma once
 
+#include <string>
 #include "vector2.h"
 #include "movement_strategy.h"
 
@@ -31,20 +32,27 @@ class Subject
     public:
         Subject(int x, int y, int radius, bool infected);
 
-        int radius(); //Radius needed for collisions
-        bool infected();
+        int radius(){ return this->_radius; }; //Radius needed for collisions
+        bool infected(){ return this->_infected; };
         void infect();
         double angle();
         double speed();
-        void set_strategy(MovementStrategy& strategy);
+        //Switch between movement strategy
+        void set_strategy(int strategy_type);
+        //Set selection status
+        void set_selected(bool b);
+        const bool get_selected(){ return this->_selected; };
         void move(double dt);
 
+        //Vector2 for movement
         Vector2 position;
         Vector2 velocity;
     private:
-        bool _infected = false;
-        int _radius = 0;
-        MovementStrategy* _strategy;
+      bool _selected = false;
+      bool _infected = false;
+      int _radius = 0;
+      //The current movement strategy
+      MovementStrategy* _strategy;
 
 };
 

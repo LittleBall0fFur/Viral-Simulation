@@ -8,6 +8,7 @@ namespace corsim
   }
 
   void LockdownMovementStrategy::move_subject(Subject& s, const double delta_time) {
-
+    if(s.get_selected()) s.position += s.velocity * (delta_time/8);
+    else{ s.position += s.velocity * delta_time; }
   }
 };

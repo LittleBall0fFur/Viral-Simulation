@@ -19,6 +19,9 @@
 #include <emscripten.h>
 #include <math.h>
 
+using namespace std;
+#include <fstream>
+
 namespace corsim
 {
 
@@ -28,7 +31,8 @@ Simulation::Simulation(int width, int height, std::unique_ptr<Canvas> canvas, st
 
 void Simulation::add_subject(Subject&& s)
 {
-  if(_distribution(_generator)) s.set_strategy(LockdownMovementStrategy::get_instance());
+  //Determines if the subject is selected, with a 75% threshold.
+  s.set_selected(_distribution(_generator));
   this->_subjects.emplace_back(std::move(s));
 }
 
@@ -86,13 +90,17 @@ void Simulation::tick()
         {
             numberInfected++;
         }
+        //Change movement strategy to lockdown, when 100 infections are reached.
+        if(numberInfected > 100 && numberInfected < 110)
+        {
+          s.set_strategy(1);
+        }
     }
 
     if(counter % 30 == 0)
     {
         _sh.get()->communicate_number_infected(counter/30,numberInfected);
     }
-
 
     draw_to_canvas();
 }
@@ -169,10 +177,8 @@ void Simulation::subject_collision(Subject& s1, Subject& s2)
         double dx2F = ((2.0*cos(theta1 - phi)) / 2) * cos(phi) + sin(theta2-phi) * cos(phi+M_PI/2.0);
         double dy2F = ((2.0*cos(theta1 - phi)) / 2) * sin(phi) + sin(theta2-phi) * sin(phi+M_PI/2.0);
 
-        s1.velocity.x = dx1F;
-        s1.velocity.y = dy1F;
-        s2.velocity.x = dx2F;
-        s2.velocity.y = dy2F;
+        s1.velocity = Vector2(dx1F, dy1F);
+        s2.velocity = Vector2(dx2F, dy2F);
 
         static_collision(s1, s2, false);
     }

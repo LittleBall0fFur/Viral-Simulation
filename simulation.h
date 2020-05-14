@@ -37,6 +37,7 @@ class Simulation
 {
     public:
         Simulation(int width, int height, std::unique_ptr<Canvas> canvas, std::unique_ptr<StatisticsHandler> sh);
+        //Generate selection status and add subject to vector
         void add_subject(Subject&& s);
         void run(); //This method starts the simulation but locks execution because theading is not supported in WASM
     private:
@@ -53,7 +54,8 @@ class Simulation
         int tick_speed = 1000/30;
         int _sim_width = 800, _sim_height = 500;
 
-        constexpr static double movement_threshold = 0.75;
+        //Generate random bool
+        constexpr static double movement_threshold = 75;
         std::default_random_engine _generator{};
         std::bernoulli_distribution _distribution{movement_threshold};
 };

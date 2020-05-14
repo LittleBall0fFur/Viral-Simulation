@@ -16,6 +16,7 @@
 
 #include "subject.h"
 #include "regular_movement_strategy.h"
+#include "lockdown_movement_strategy.h"
 #include <math.h>
 
 namespace corsim
@@ -32,22 +33,23 @@ Subject::Subject(int x, int y, int radius, bool infected)
     _strategy = &RegularMovementStrategy::get_instance();
 }
 
-void Subject::set_strategy(MovementStrategy& strategy){
-  _strategy = &strategy;
+void Subject::set_strategy(int strategy_type){
+  switch(strategy_type){
+    case 0:
+      _strategy = &RegularMovementStrategy::get_instance();
+    break;
+    case 1:
+      _strategy = &LockdownMovementStrategy::get_instance();
+      break;
+  }
+}
+
+void Subject::set_selected(bool b){
+  _selected = b;
 }
 
 void Subject::move(double dt){
   _strategy->move_subject(*this, dt);
-}
-
-int Subject::radius()
-{
-    return this->_radius;
-}
-
-bool Subject::infected()
-{
-    return this->_infected;
 }
 
 void Subject::infect()
